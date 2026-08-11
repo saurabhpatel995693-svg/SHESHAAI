@@ -1,3 +1,5 @@
+import { MODELS } from './models.js';
+
 export const config = {
   api: {
     bodyParser: {
@@ -117,7 +119,7 @@ export default async function handler(req, res) {
         ]
       };
 
-      const geminiRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+      const geminiRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${MODELS.GEMINI_PRIMARY}:generateContent?key=${key}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

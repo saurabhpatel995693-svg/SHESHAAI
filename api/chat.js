@@ -1,4 +1,5 @@
 import { Readable } from 'stream';
+import { MODELS } from './models.js';
 
 export const config = {
   api: {
@@ -979,7 +980,7 @@ export default async function handler(req, res) {
     name: `Gemini-${i}`,
     url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
     key,
-    model: 'gemini-2.0-flash',
+    model: MODELS.GEMINI_PRIMARY,
     timeout: 8000
   }));
 
@@ -1057,10 +1058,7 @@ FUNCTIONALITY: Feature poora implement karo (koi TODO/incomplete na ho), empty-s
     codingProviders.push({ name: 'Groq-2', url: 'https://api.groq.com/openai/v1/chat/completions', key: process.env.GROQ_2, model: 'llama-3.1-8b-instant', timeout: 8000 });
   }
   if (process.env.OPENROUTER_KEY) {
-    codingProviders.push({ name: 'OpenRouter', url: 'https://openrouter.ai/api/v1/chat/completions', key: process.env.OPENROUTER_KEY, model: 'deepseek/deepseek-r1:free', headers: { 'HTTP-Referer': 'https://sheshaai.vercel.app', 'X-Title': 'SHESHAAI' }, timeout: 8000 });
-  }
-  if (process.env.GITHUB_TOKEN) {
-    codingProviders.push({ name: 'GitHub-Models', url: 'https://models.inference.ai.azure.com/chat/completions', key: process.env.GITHUB_TOKEN, model: 'gpt-4o', timeout: 8000 });
+    codingProviders.push({ name: 'OpenRouter', url: 'https://openrouter.ai/api/v1/chat/completions', key: process.env.OPENROUTER_KEY, model: MODELS.OPENROUTER_DEFAULT, headers: { 'HTTP-Referer': 'https://sheshaai.vercel.app', 'X-Title': 'SHESHAAI' }, timeout: 8000 });
   }
 
   const groqTargets = clientGroqKey ? [
@@ -1088,14 +1086,14 @@ FUNCTIONALITY: Feature poora implement karo (koi TODO/incomplete na ho), empty-s
     let baseUrl = clientCustomBase ? clientCustomBase.trim().replace(/\/$/, '') : '';
     let targetModel = clientCustomModel ? clientCustomModel.trim() : '';
     if (!baseUrl) baseUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
-    if (!targetModel) targetModel = 'gemini-2.0-flash';
+    if (!targetModel) targetModel = MODELS.GEMINI_PRIMARY;
     if (baseUrl && !baseUrl.endsWith('/chat/completions') && !baseUrl.includes('/generateContent')) {
       baseUrl += '/chat/completions';
     }
     targets.push({ name: 'User-Custom', url: baseUrl, key: hasValidCustomKey ? clientCustomKey.trim() : '', model: targetModel, timeout: 10000 });
   }
 
-  // Coding mode failover chain (NVIDIA → Groq → OpenRouter → GitHub Models)
+  // Coding mode failover chain (NVIDIA → Groq → OpenRouter)
   if (isCodingTask) {
     targets.push(...codingProviders);
   } else {
@@ -1149,7 +1147,7 @@ FUNCTIONALITY: Feature poora implement karo (koi TODO/incomplete na ho), empty-s
 
       const body = JSON.stringify({
         messages: normalizedMessages,
-        model: target.model || 'gemini-2.0-flash',
+        model: target.model || MODELS.GEMINI_PRIMARY,
         temperature: payload.temperature || 0.7,
         max_tokens: maxTokens,
         stream: wantsStream

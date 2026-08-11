@@ -1,3 +1,5 @@
+import { MODELS } from './models.js';
+
 export const config = {
   api: {
     bodyParser: {
@@ -115,46 +117,51 @@ No text outside this JSON.`;
     let rawOutput = null;
     let lastError = null;
 
+    const targetModels = [MODELS.GEMINI_PRIMARY, MODELS.GEMINI_FALLBACK];
+
     for (let i = 0; i < GEMINI_KEYS.length; i++) {
       const key = GEMINI_KEYS[i];
-      try {
-        console.log(`[PLAN GENERATOR] Requesting Gemini (Key index ${i}, Vision: ${!!base64Data})...`);
-        
-        const parts = [{ text: promptText }];
-        if (base64Data) {
-          parts.push({ inlineData: { mimeType: imageMime, data: base64Data } });
-        }
+      for (const modelName of targetModels) {
+        try {
+          console.log(`[PLAN GENERATOR] Requesting ${modelName} (Key index ${i}, Vision: ${!!base64Data})...`);
+          
+          const parts = [{ text: promptText }];
+          if (base64Data) {
+            parts.push({ inlineData: { mimeType: imageMime, data: base64Data } });
+          }
 
-        const response = await fetchWithTimeout(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts }],
-              generationConfig: {
-                temperature: 0.3,
-                maxOutputTokens: 3000,
-                responseMimeType: "application/json"
-              }
-            })
-          },
-          20000
-        );
+          const response = await fetchWithTimeout(
+            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts }],
+                generationConfig: {
+                  temperature: 0.3,
+                  maxOutputTokens: 3000,
+                  responseMimeType: "application/json"
+                }
+              })
+            },
+            20000
+          );
 
-        if (response.ok) {
-          const resData = await response.json();
-          rawOutput = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (rawOutput) break;
-        } else {
-          const errTxt = await response.text().catch(() => '');
-          lastError = `Gemini Key ${i} failed (${response.status}): ${errTxt.substring(0, 100)}`;
+          if (response.ok) {
+            const resData = await response.json();
+            rawOutput = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (rawOutput) break;
+          } else {
+            const errTxt = await response.text().catch(() => '');
+            lastError = `Gemini (${modelName}, Key ${i}) failed (${response.status}): ${errTxt.substring(0, 100)}`;
+            console.warn(`[PLAN GENERATOR] ${lastError}`);
+          }
+        } catch (err) {
+          lastError = `Gemini (${modelName}, Key ${i}) error: ${err.message}`;
           console.warn(`[PLAN GENERATOR] ${lastError}`);
         }
-      } catch (err) {
-        lastError = `Gemini Key ${i} error: ${err.message}`;
-        console.warn(`[PLAN GENERATOR] ${lastError}`);
       }
+      if (rawOutput) break;
     }
 
     if (!rawOutput) {
