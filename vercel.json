@@ -11,6 +11,15 @@
     },
     "api/transcribe-audio.js": {
       "maxDuration": 60
+    },
+    "api/health-meal-scan.js": {
+      "maxDuration": 60
+    },
+    "api/health-form-check.js": {
+      "maxDuration": 60
+    },
+    "api/health-plan-generator.js": {
+      "maxDuration": 60
     }
   },
   "redirects": [
@@ -19,7 +28,10 @@
   "rewrites": [
     { "source": "/api/chat", "destination": "/api/chat" },
     { "source": "/api/search", "destination": "/api/search" },
-    { "source": "/api/transcribe-audio", "destination": "/api/transcribe-audio" }
+    { "source": "/api/transcribe-audio", "destination": "/api/transcribe-audio" },
+    { "source": "/api/health-meal-scan", "destination": "/api/health-meal-scan" },
+    { "source": "/api/health-form-check", "destination": "/api/health-form-check" },
+    { "source": "/api/health-plan-generator", "destination": "/api/health-plan-generator" }
   ],
   "headers": [
     {

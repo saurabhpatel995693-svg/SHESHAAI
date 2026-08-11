@@ -1,0 +1,1005 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="❤️ Health & Fitness AI Studio — SHESHAAI" wide={true} noSidebars={true}>
+  <div class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Top Navigation Bar & Title -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-hairline pb-4">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">❤️</span>
+          <h1 class="text-display-sm md:text-display-md text-ink font-semibold tracking-tight">
+            SHESHAAI Health & Fitness Studio
+          </h1>
+          <span class="px-2 py-0.5 text-[11px] font-mono font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">
+            AI Vision + Open Food Facts
+          </span>
+        </div>
+        <p class="text-body-sm text-mute mt-1">
+          Smart nutrition analysis, AI posture form checking, and personalized fitness & sleep plans.
+        </p>
+      </div>
+
+      <!-- Quick Tab Buttons -->
+      <div class="flex items-center gap-1.5 bg-canvas-soft border border-hairline p-1 rounded-lg">
+        <button id="tab-btn-meal" class="health-tab-btn health-tab-active px-3 py-1.5 rounded-md text-body-sm font-medium transition cursor-pointer flex items-center gap-2">
+          <span>🍽️</span> Meal Scanner
+        </button>
+        <button id="tab-btn-form" class="health-tab-btn px-3 py-1.5 rounded-md text-body-sm text-body font-medium hover:text-ink transition cursor-pointer flex items-center gap-2">
+          <span>🏋️</span> Form Checker
+        </button>
+        <button id="tab-btn-plan" class="health-tab-btn px-3 py-1.5 rounded-md text-body-sm text-body font-medium hover:text-ink transition cursor-pointer flex items-center gap-2">
+          <span>📋</span> Personalized Plan
+        </button>
+      </div>
+    </div>
+
+    <!-- MANDATORY PERSISTENT DISCLAIMER BANNER -->
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3.5 flex items-start gap-3 text-amber-900 dark:text-amber-200 text-xs font-mono">
+      <span class="text-base leading-none">⚠️</span>
+      <div>
+        <strong class="font-semibold uppercase tracking-wider block mb-0.5">Medical & Health Disclaimer</strong>
+        These are AI-generated estimates, not medical advice. Consult a doctor or registered dietitian before making health decisions. Photos are processed temporarily in memory and not permanently stored.
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────────────────────────────────────── -->
+    <!-- SECTION 1: MEAL SCANNER (Calories, Macros, Nutrients, Barcode) -->
+    <!-- ────────────────────────────────────────────────────────────────── -->
+    <section id="section-meal-scanner" class="health-section space-y-6">
+      
+      <!-- Top Grid: Upload & Controls + Daily Tracker -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Meal Upload Card -->
+        <div class="lg:col-span-7 bg-canvas border border-hairline rounded-xl p-5 shadow-level-1 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-body-md-strong text-ink flex items-center gap-2">
+              <span>🍽️</span> Scan Meal or Packaged Food
+            </h2>
+            <span class="text-[11px] font-mono text-mute">Supports Barcode Auto-Check</span>
+          </div>
+
+          <!-- Dropzone -->
+          <div id="meal-dropzone" class="border-2 border-dashed border-hairline hover:border-violet-soft rounded-lg p-6 text-center cursor-pointer transition bg-canvas-soft/50 hover:bg-canvas-soft flex flex-col items-center justify-center gap-2 relative min-h-[160px]">
+            <input type="file" id="meal-file-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+            <div id="meal-preview-container" class="hidden w-full flex flex-col items-center gap-2">
+              <img id="meal-img-preview" class="max-h-48 max-w-full rounded-md object-contain border border-hairline shadow-sm" alt="Meal Preview" />
+              <button id="meal-clear-img" type="button" class="text-xs font-mono text-red-500 hover:underline z-10">Remove image</button>
+            </div>
+            <div id="meal-dropzone-prompt" class="flex flex-col items-center gap-1.5">
+              <span class="text-3xl">📷</span>
+              <p class="text-body-sm font-medium text-ink">Upload or capture a meal photo</p>
+              <p class="text-xs text-mute font-mono">PNG, JPG, WEBP. If product has a barcode, scan it for database-verified accuracy.</p>
+            </div>
+          </div>
+
+          <!-- Quick Test Barcode Drawer -->
+          <div class="flex items-center gap-2 text-xs font-mono pt-1">
+            <span class="text-mute">Or test with real barcode:</span>
+            <button type="button" class="demo-barcode-btn px-2 py-0.5 bg-canvas-soft border border-hairline rounded hover:bg-canvas-soft-2 text-ink transition" data-barcode="737628064502">
+              🔍 Thai Kitchen (737628064502)
+            </button>
+            <button type="button" class="demo-barcode-btn px-2 py-0.5 bg-canvas-soft border border-hairline rounded hover:bg-canvas-soft-2 text-ink transition" data-barcode="3017620422003">
+              🔍 Nutella (3017620422003)
+            </button>
+          </div>
+
+          <!-- Action Button -->
+          <button id="btn-scan-meal" class="w-full py-2.5 px-4 bg-primary text-on-primary font-medium rounded-lg text-body-sm hover:bg-black transition shadow-level-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span id="scan-btn-spinner" class="hidden animate-spin">⏳</span>
+            <span id="scan-btn-text">Analyze Meal & Macros</span>
+          </button>
+        </div>
+
+        <!-- Daily Calorie & Macro Log Card -->
+        <div class="lg:col-span-5 bg-canvas border border-hairline rounded-xl p-5 shadow-level-1 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-body-md-strong text-ink flex items-center gap-2">
+                <span>📊</span> Today's Nutrition Log
+              </h3>
+              <button id="btn-clear-log" class="text-[11px] font-mono text-mute hover:text-red-500 transition">Reset Log</button>
+            </div>
+
+            <!-- Target Progress Ring / Stats -->
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-mono mb-1">
+                  <span class="text-body">Calories Logged</span>
+                  <span class="font-semibold text-ink"><span id="log-total-cal">0</span> / <span id="log-goal-cal">2000</span> kcal</span>
+                </div>
+                <div class="w-full h-2.5 bg-canvas-soft rounded-full overflow-hidden border border-hairline">
+                  <div id="log-cal-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Macros Breakdown Grid -->
+              <div class="grid grid-cols-4 gap-2 pt-2 text-center">
+                <div class="bg-canvas-soft border border-hairline p-2 rounded-lg">
+                  <span class="text-[10px] font-mono text-mute block">PROTEIN</span>
+                  <span class="text-body-sm font-semibold text-ink"><span id="log-total-p">0</span>g</span>
+                </div>
+                <div class="bg-canvas-soft border border-hairline p-2 rounded-lg">
+                  <span class="text-[10px] font-mono text-mute block">CARBS</span>
+                  <span class="text-body-sm font-semibold text-ink"><span id="log-total-c">0</span>g</span>
+                </div>
+                <div class="bg-canvas-soft border border-hairline p-2 rounded-lg">
+                  <span class="text-[10px] font-mono text-mute block">FAT</span>
+                  <span class="text-body-sm font-semibold text-ink"><span id="log-total-f">0</span>g</span>
+                </div>
+                <div class="bg-canvas-soft border border-hairline p-2 rounded-lg">
+                  <span class="text-[10px] font-mono text-mute block">FIBER</span>
+                  <span class="text-body-sm font-semibold text-ink"><span id="log-total-fib">0</span>g</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Goal adjustment input -->
+          <div class="pt-3 border-t border-hairline flex items-center justify-between gap-2 text-xs font-mono">
+            <span class="text-mute">Daily Goal Target:</span>
+            <div class="flex items-center gap-1">
+              <input type="number" id="input-goal-cal" value="2000" min="500" max="10000" step="50" class="w-20 px-2 py-1 bg-canvas-soft border border-hairline rounded text-ink text-right font-mono" />
+              <span class="text-mute">kcal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meal Scan Results Section -->
+      <div id="meal-results-container" class="hidden space-y-4">
+        
+        <!-- Low Confidence Warning Banner -->
+        <div id="meal-confidence-banner" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-xs font-mono text-amber-800 dark:text-amber-200 flex items-center gap-2">
+          <span>⚠️</span>
+          <span>Low analysis confidence: Portion sizes or specific ingredients are estimated. Double check item weights for precise tracking.</span>
+        </div>
+
+        <!-- Main Nutrition Card -->
+        <div class="bg-canvas border border-hairline rounded-xl p-6 shadow-level-2 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-hairline pb-4">
+            <div>
+              <h3 class="text-display-sm text-ink font-semibold">Nutrition Breakdown</h3>
+              <p id="meal-notes-text" class="text-xs text-mute font-mono mt-0.5"></p>
+            </div>
+            <button id="btn-log-this-meal" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-mono font-medium transition shadow-sm flex items-center gap-1.5 self-start sm:self-auto cursor-pointer">
+              <span>➕</span> Add to Today's Log
+            </button>
+          </div>
+
+          <!-- Total Macros Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div class="bg-canvas-soft border border-hairline p-3.5 rounded-xl text-center">
+              <span class="text-xs font-mono text-mute block mb-1">TOTAL CALORIES</span>
+              <span class="text-display-sm text-ink font-bold" id="res-total-cal">0</span>
+              <span class="text-[11px] text-mute block">kcal</span>
+            </div>
+            <div class="bg-canvas-soft border border-hairline p-3.5 rounded-xl text-center">
+              <span class="text-xs font-mono text-mute block mb-1">PROTEIN</span>
+              <span class="text-display-sm text-emerald-600 font-bold" id="res-total-p">0</span>
+              <span class="text-[11px] text-mute block">grams</span>
+            </div>
+            <div class="bg-canvas-soft border border-hairline p-3.5 rounded-xl text-center">
+              <span class="text-xs font-mono text-mute block mb-1">CARBS</span>
+              <span class="text-display-sm text-blue-600 font-bold" id="res-total-c">0</span>
+              <span class="text-[11px] text-mute block">grams</span>
+            </div>
+            <div class="bg-canvas-soft border border-hairline p-3.5 rounded-xl text-center">
+              <span class="text-xs font-mono text-mute block mb-1">FAT</span>
+              <span class="text-display-sm text-amber-600 font-bold" id="res-total-f">0</span>
+              <span class="text-[11px] text-mute block">grams</span>
+            </div>
+            <div class="bg-canvas-soft border border-hairline p-3.5 rounded-xl text-center col-span-2 sm:col-span-1">
+              <span class="text-xs font-mono text-mute block mb-1">FIBER</span>
+              <span class="text-display-sm text-violet-600 font-bold" id="res-total-fib">0</span>
+              <span class="text-[11px] text-mute block">grams</span>
+            </div>
+          </div>
+
+          <!-- Itemized Food List Table -->
+          <div>
+            <h4 class="text-body-sm-strong text-ink mb-3 font-mono">Identified Food Items & Verification Status</h4>
+            <div class="overflow-x-auto border border-hairline rounded-lg">
+              <table class="w-full text-left text-xs font-mono">
+                <thead class="bg-canvas-soft border-b border-hairline text-mute uppercase">
+                  <tr>
+                    <th class="p-3">Item Name</th>
+                    <th class="p-3">Source & Verification</th>
+                    <th class="p-3 text-right">Est. Weight</th>
+                    <th class="p-3 text-right">Calories</th>
+                    <th class="p-3 text-right">Protein</th>
+                    <th class="p-3 text-right">Carbs</th>
+                    <th class="p-3 text-right">Fat</th>
+                  </tr>
+                </thead>
+                <tbody id="meal-items-tbody" class="divide-y divide-hairline">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────────────────────────────── -->
+    <!-- SECTION 2: FORM CHECKER (Posture & Alignment Analysis) -->
+    <!-- ────────────────────────────────────────────────────────────────── -->
+    <section id="section-form-checker" class="health-section hidden space-y-6">
+      <div class="bg-canvas border border-hairline rounded-xl p-6 shadow-level-1 space-y-6">
+        <div class="border-b border-hairline pb-4">
+          <h2 class="text-display-sm text-ink font-semibold flex items-center gap-2">
+            <span>🏋️</span> AI Posture & Workout Form Checker
+          </h2>
+          <p class="text-body-sm text-mute mt-1">
+            Upload a photo or frame mid-exercise to receive instant visual feedback on your body alignment and pose mechanics.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
+          <!-- Input Controls -->
+          <div class="md:col-span-5 space-y-4">
+            
+            <!-- Exercise Picker -->
+            <div>
+              <label class="block text-xs font-mono font-medium text-ink mb-1.5">Select Exercise Name</label>
+              <select id="form-exercise-select" class="w-full px-3 py-2 bg-canvas-soft border border-hairline rounded-lg text-body-sm text-ink focus:outline-none focus:border-violet">
+                <option value="Barbell / Goblet Squat">🏋️ Barbell / Goblet Squat</option>
+                <option value="Plank / Forearm Plank">🧘 Plank / Forearm Plank</option>
+                <option value="Push-up">💪 Push-up</option>
+                <option value="Barbell / Dumbbell Deadlift">🏋️ Deadlift</option>
+                <option value="Walking / Stationary Lunge">🦵 Lunge</option>
+                <option value="Overhead Shoulder Press">🏋️ Overhead Shoulder Press</option>
+                <option value="Bicep Curl">💪 Bicep Curl</option>
+                <option value="Other / Custom Pose">⚡ Other Custom Exercise</option>
+              </select>
+            </div>
+
+            <!-- Pose Image Upload -->
+            <div>
+              <label class="block text-xs font-mono font-medium text-ink mb-1.5">Upload Exercise Frame / Photo</label>
+              <div id="form-dropzone" class="border-2 border-dashed border-hairline hover:border-violet-soft rounded-lg p-5 text-center cursor-pointer transition bg-canvas-soft/50 hover:bg-canvas-soft flex flex-col items-center justify-center gap-2 relative min-h-[160px]">
+                <input type="file" id="form-file-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+                <div id="form-preview-container" class="hidden w-full flex flex-col items-center gap-2">
+                  <img id="form-img-preview" class="max-h-44 max-w-full rounded-md object-contain border border-hairline" alt="Form Preview" />
+                  <button id="form-clear-img" type="button" class="text-xs font-mono text-red-500 hover:underline z-10">Remove frame</button>
+                </div>
+                <div id="form-dropzone-prompt" class="flex flex-col items-center gap-1.5">
+                  <span class="text-2xl">📸</span>
+                  <p class="text-xs font-medium text-ink">Upload exercise photo or screenshot</p>
+                  <p class="text-[11px] text-mute font-mono">Ensure full body or key joints are clearly visible.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button id="btn-check-form" class="w-full py-2.5 px-4 bg-primary text-on-primary font-medium rounded-lg text-body-sm hover:bg-black transition shadow-level-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span id="form-btn-spinner" class="hidden animate-spin">⏳</span>
+              <span id="form-btn-text">Analyze Posture & Alignment</span>
+            </button>
+
+            <!-- Permanent Form Safety Note -->
+            <p class="text-[11px] text-mute font-mono leading-relaxed bg-canvas-soft p-3 rounded-lg border border-hairline">
+              ℹ️ <strong>Note:</strong> General visual feedback only. Not a substitute for a certified trainer or physical therapist, especially for heavy weighted lifts.
+            </p>
+          </div>
+
+          <!-- Form Analysis Output Area -->
+          <div class="md:col-span-7">
+            <div id="form-result-placeholder" class="h-full border border-hairline rounded-xl bg-canvas-soft/30 p-8 flex flex-col items-center justify-center text-center text-mute space-y-2">
+              <span class="text-4xl opacity-50">🧘</span>
+              <p class="text-body-sm font-medium text-ink">No form analysis generated yet</p>
+              <p class="text-xs font-mono max-w-xs">Select your exercise, upload a pose photo, and click Analyze Posture.</p>
+            </div>
+
+            <div id="form-result-card" class="hidden space-y-4">
+              <!-- Header Status Badge -->
+              <div id="form-status-box" class="p-4 rounded-xl border flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span id="form-status-icon" class="text-2xl">✅</span>
+                  <div>
+                    <h3 id="form-status-title" class="text-body-md-strong font-bold">Good Form Detected</h3>
+                    <p id="form-exercise-name" class="text-xs font-mono opacity-80">Barbell Squat</p>
+                  </div>
+                </div>
+                <span id="form-status-badge" class="px-2.5 py-1 text-xs font-mono font-semibold uppercase rounded-full">GOOD</span>
+              </div>
+
+              <!-- Safety Alert Banner if present -->
+              <div id="form-safety-alert" class="hidden bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-xs font-mono text-red-800 dark:text-red-200 space-y-1">
+                <div class="flex items-center gap-2 font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+                  <span>🚨</span> Injury Risk Warning
+                </div>
+                <p id="form-safety-text"></p>
+              </div>
+
+              <!-- Observations -->
+              <div class="bg-canvas border border-hairline p-4 rounded-xl space-y-2">
+                <h4 class="text-xs font-mono font-semibold uppercase text-ink flex items-center gap-1.5">
+                  <span>🔍</span> Visual Observations
+                </h4>
+                <ul id="form-obs-list" class="space-y-1.5 text-xs text-body font-mono pl-4 list-disc">
+                  <!-- Injected via JS -->
+                </ul>
+              </div>
+
+              <!-- Actionable Corrections -->
+              <div class="bg-canvas border border-hairline p-4 rounded-xl space-y-2">
+                <h4 class="text-xs font-mono font-semibold uppercase text-ink flex items-center gap-1.5">
+                  <span>🎯</span> Recommended Form Tweaks
+                </h4>
+                <ul id="form-corr-list" class="space-y-1.5 text-xs text-body font-mono pl-4 list-disc">
+                  <!-- Injected via JS -->
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────────────────────────────── -->
+    <!-- SECTION 3: PERSONALIZED PLAN GENERATOR -->
+    <!-- ────────────────────────────────────────────────────────────────── -->
+    <section id="section-plan-generator" class="health-section hidden space-y-6">
+      <div class="bg-canvas border border-hairline rounded-xl p-6 shadow-level-1 space-y-6">
+        <div class="border-b border-hairline pb-4">
+          <h2 class="text-display-sm text-ink font-semibold flex items-center gap-2">
+            <span>📋</span> Photo-Calibrated Workout, Diet & Sleep Plan
+          </h2>
+          <p class="text-body-sm text-mute mt-1">
+            Answer a few quick questions to generate a balanced 3-part lifestyle program tailored to your goals.
+          </p>
+        </div>
+
+        <!-- Questionnaire Form -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
+          <!-- Questionnaire Controls -->
+          <div class="md:col-span-5 space-y-4">
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-mono font-medium text-ink mb-1">Age</label>
+                <input type="number" id="plan-age" value="25" min="12" max="100" class="w-full px-3 py-2 bg-canvas-soft border border-hairline rounded-lg text-body-sm font-mono text-ink" />
+              </div>
+              <div>
+                <label class="block text-xs font-mono font-medium text-ink mb-1">Primary Goal</label>
+                <select id="plan-goal" class="w-full px-3 py-2 bg-canvas-soft border border-hairline rounded-lg text-body-sm font-mono text-ink">
+                  <option value="General Fitness & Vitality">General Fitness</option>
+                  <option value="Fat Loss & Toning">Lose Weight / Fat Loss</option>
+                  <option value="Muscle Building & Strength">Build Muscle & Strength</option>
+                  <option value="Better Sleep & Stress Recovery">Better Sleep & Recovery</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-mono font-medium text-ink mb-1">Activity Level</label>
+                <select id="plan-activity" class="w-full px-3 py-2 bg-canvas-soft border border-hairline rounded-lg text-body-sm font-mono text-ink">
+                  <option value="Lightly Active (1-2 days/wk)">Lightly Active</option>
+                  <option value="Moderately Active (3-4 days/wk)">Moderately Active</option>
+                  <option value="Very Active (5+ days/wk)">Very Active</option>
+                  <option value="Sedentary (Desk Job)">Sedentary</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-mono font-medium text-ink mb-1">Dietary Restrictions</label>
+                <select id="plan-diet" class="w-full px-3 py-2 bg-canvas-soft border border-hairline rounded-lg text-body-sm font-mono text-ink">
+                  <option value="None / High-Protein Whole Foods">None / Flexible</option>
+                  <option value="Vegetarian">Vegetarian</option>
+                  <option value="Vegan">Vegan</option>
+                  <option value="Keto / Low-Carb">Keto / Low-Carb</option>
+                  <option value="Gluten-Free">Gluten-Free</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-mono font-medium text-ink mb-1">Sleep & Stress Concerns</label>
+              <input type="text" id="plan-sleep" placeholder="e.g. Trouble falling asleep, irregular bedtime" class="w-full px-3 py-2 bg-canvas-soft border border-hairline rounded-lg text-body-sm font-mono text-ink placeholder:text-mute" />
+            </div>
+
+            <!-- Optional Body Photo Upload -->
+            <div>
+              <label class="block text-xs font-mono font-medium text-ink mb-1">Optional Full-Body Photo <span class="text-mute font-normal">(for difficulty calibration)</span></label>
+              <div id="plan-dropzone" class="border border-dashed border-hairline hover:border-violet-soft rounded-lg p-3 text-center cursor-pointer transition bg-canvas-soft/50 hover:bg-canvas-soft flex items-center justify-center gap-2 relative">
+                <input type="file" id="plan-file-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+                <span class="text-xl">📷</span>
+                <span id="plan-img-filename" class="text-xs font-mono text-mute">Attach photo (optional)</span>
+              </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button id="btn-generate-plan" class="w-full py-2.5 px-4 bg-primary text-on-primary font-medium rounded-lg text-body-sm hover:bg-black transition shadow-level-2 flex items-center justify-center gap-2 disabled:opacity-50">
+              <span id="plan-btn-spinner" class="hidden animate-spin">⏳</span>
+              <span id="plan-btn-text">Generate 3-Part Health Plan</span>
+            </button>
+          </div>
+
+          <!-- Generated Plan Cards Display -->
+          <div class="md:col-span-7">
+            <div id="plan-result-placeholder" class="h-full border border-hairline rounded-xl bg-canvas-soft/30 p-8 flex flex-col items-center justify-center text-center text-mute space-y-2">
+              <span class="text-4xl opacity-50">📋</span>
+              <p class="text-body-sm font-medium text-ink">No personalized plan generated yet</p>
+              <p class="text-xs font-mono max-w-xs">Fill out the questionnaire and click Generate Plan.</p>
+            </div>
+
+            <div id="plan-result-cards" class="hidden space-y-5">
+              
+              <!-- Impression Header -->
+              <div id="plan-impression-box" class="bg-violet-500/10 border border-violet-500/30 p-3.5 rounded-xl text-xs font-mono text-violet-900 dark:text-violet-200">
+                <strong class="font-semibold block mb-0.5">🌟 Coach Impression & Calibration</strong>
+                <span id="plan-impression-text"></span>
+              </div>
+
+              <!-- 3 TAB CARDS FOR WORKOUT, DIET, SLEEP -->
+              <div class="space-y-4">
+                
+                <!-- CARD 1: WORKOUT PLAN -->
+                <div class="bg-canvas border border-hairline rounded-xl p-5 shadow-level-1 space-y-3">
+                  <div class="flex items-center justify-between border-b border-hairline pb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-xl">🏋️</span>
+                      <h3 class="text-body-md-strong text-ink font-bold" id="plan-workout-title">Weekly Workout Plan</h3>
+                      <span id="plan-workout-diff" class="px-2 py-0.5 text-[10px] font-mono bg-canvas-soft border border-hairline rounded-full font-semibold uppercase">Beginner</span>
+                    </div>
+                    <button class="regen-section-btn text-xs font-mono text-violet hover:underline cursor-pointer" data-section="workout_plan">🔄 Refresh Workout</button>
+                  </div>
+
+                  <div id="plan-workout-days" class="space-y-3 text-xs font-mono">
+                    <!-- Injected via JS -->
+                  </div>
+                </div>
+
+                <!-- CARD 2: DIET PLAN -->
+                <div class="bg-canvas border border-hairline rounded-xl p-5 shadow-level-1 space-y-3">
+                  <div class="flex items-center justify-between border-b border-hairline pb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-xl">🥗</span>
+                      <h3 class="text-body-md-strong text-ink font-bold" id="plan-diet-title">Dietary Framework</h3>
+                    </div>
+                    <button class="regen-section-btn text-xs font-mono text-violet hover:underline cursor-pointer" data-section="diet_plan">🔄 Refresh Diet</button>
+                  </div>
+
+                  <p id="plan-diet-guidance" class="text-xs text-body font-mono leading-relaxed"></p>
+
+                  <div class="bg-canvas-soft p-3 rounded-lg border border-hairline space-y-2 text-xs font-mono">
+                    <strong class="text-ink font-semibold uppercase text-[10px]">Sample Day of Eating:</strong>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-mute">
+                      <div><strong class="text-ink">Breakfast:</strong> <span id="diet-sample-b"></span></div>
+                      <div><strong class="text-ink">Lunch:</strong> <span id="diet-sample-l"></span></div>
+                      <div><strong class="text-ink">Dinner:</strong> <span id="diet-sample-d"></span></div>
+                      <div><strong class="text-ink">Snacks:</strong> <span id="diet-sample-s"></span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CARD 3: SLEEP PLAN -->
+                <div class="bg-canvas border border-hairline rounded-xl p-5 shadow-level-1 space-y-3">
+                  <div class="flex items-center justify-between border-b border-hairline pb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-xl">🌙</span>
+                      <h3 class="text-body-md-strong text-ink font-bold" id="plan-sleep-title">Sleep & Recovery Plan</h3>
+                    </div>
+                    <button class="regen-section-btn text-xs font-mono text-violet hover:underline cursor-pointer" data-section="sleep_plan">🔄 Refresh Sleep</button>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                    <div class="bg-canvas-soft p-3 rounded-lg border border-hairline">
+                      <span class="text-[10px] text-mute uppercase font-semibold block mb-1">Target Schedule</span>
+                      <p id="sleep-schedule" class="text-ink font-medium"></p>
+                    </div>
+                    <div class="bg-canvas-soft p-3 rounded-lg border border-hairline">
+                      <span class="text-[10px] text-mute uppercase font-semibold block mb-1">Screen Cutoff</span>
+                      <p id="sleep-cutoff" class="text-ink font-medium"></p>
+                    </div>
+                  </div>
+
+                  <div class="text-xs font-mono space-y-1">
+                    <strong class="text-ink uppercase text-[10px] block">Wind-down Protocol:</strong>
+                    <ul id="sleep-winddown-list" class="list-disc pl-4 text-mute space-y-1">
+                      <!-- Injected via JS -->
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- INTERACTIVE SCRIPT -->
+  <script is:inline>
+    // ── Local Storage Daily Log State ─────────────────────────────────────
+    const LOCAL_STORAGE_KEY = 'shesha_health_daily_log';
+
+    function loadDailyLog() {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+      let data = { date: todayStr, goal: 2000, calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.date === todayStr) data = parsed;
+        } catch(e){}
+      }
+      return data;
+    }
+
+    function saveDailyLog(log) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(log));
+      updateLogUI(log);
+    }
+
+    function updateLogUI(log) {
+      document.getElementById('log-total-cal').innerText = log.calories;
+      document.getElementById('log-goal-cal').innerText = log.goal;
+      document.getElementById('log-total-p').innerText = log.protein;
+      document.getElementById('log-total-c').innerText = log.carbs;
+      document.getElementById('log-total-f').innerText = log.fat;
+      document.getElementById('log-total-fib').innerText = log.fiber;
+      document.getElementById('input-goal-cal').value = log.goal;
+
+      const pct = Math.min(100, Math.round((log.calories / (log.goal || 2000)) * 100));
+      document.getElementById('log-cal-bar').style.width = pct + '%';
+    }
+
+    // Initialize daily log
+    let currentLog = loadDailyLog();
+    updateLogUI(currentLog);
+
+    document.getElementById('input-goal-cal').addEventListener('change', (e) => {
+      currentLog.goal = parseInt(e.target.value) || 2000;
+      saveDailyLog(currentLog);
+    });
+
+    document.getElementById('btn-clear-log').addEventListener('click', () => {
+      if (confirm('Reset today\'s nutrition log to 0 calories?')) {
+        currentLog = { date: new Date().toISOString().slice(0, 10), goal: currentLog.goal, calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
+        saveDailyLog(currentLog);
+      }
+    });
+
+    // ── Tab Switching ─────────────────────────────────────────────────────
+    const tabBtnMeal = document.getElementById('tab-btn-meal');
+    const tabBtnForm = document.getElementById('tab-btn-form');
+    const tabBtnPlan = document.getElementById('tab-btn-plan');
+
+    const secMeal = document.getElementById('section-meal-scanner');
+    const secForm = document.getElementById('section-form-checker');
+    const secPlan = document.getElementById('section-plan-generator');
+
+    function switchTab(activeBtn, activeSec) {
+      [tabBtnMeal, tabBtnForm, tabBtnPlan].forEach(btn => {
+        btn.classList.remove('health-tab-active', 'bg-canvas', 'shadow-sm', 'text-ink');
+        btn.classList.add('text-body');
+      });
+      activeBtn.classList.add('health-tab-active', 'bg-canvas', 'shadow-sm', 'text-ink');
+      activeBtn.classList.remove('text-body');
+
+      [secMeal, secForm, secPlan].forEach(sec => sec.classList.add('hidden'));
+      activeSec.classList.remove('hidden');
+    }
+
+    tabBtnMeal.addEventListener('click', () => switchTab(tabBtnMeal, secMeal));
+    tabBtnForm.addEventListener('click', () => switchTab(tabBtnForm, secForm));
+    tabBtnPlan.addEventListener('click', () => switchTab(tabBtnPlan, secPlan));
+
+    // ── Helper base64 reader ──────────────────────────────────────────────
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ── FEATURE 1: MEAL SCANNER LOGIC ──────────────────────────────────────
+    const mealFileInput = document.getElementById('meal-file-input');
+    const mealImgPreview = document.getElementById('meal-img-preview');
+    const mealPreviewContainer = document.getElementById('meal-preview-container');
+    const mealDropzonePrompt = document.getElementById('meal-dropzone-prompt');
+    const mealClearImg = document.getElementById('meal-clear-img');
+    const btnScanMeal = document.getElementById('btn-scan-meal');
+    let currentMealBase64 = null;
+    let lastScanData = null;
+
+    mealFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        currentMealBase64 = await fileToBase64(file);
+        mealImgPreview.src = currentMealBase64;
+        mealPreviewContainer.classList.remove('hidden');
+        mealDropzonePrompt.classList.add('hidden');
+      }
+    });
+
+    mealClearImg.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentMealBase64 = null;
+      mealFileInput.value = '';
+      mealPreviewContainer.classList.add('hidden');
+      mealDropzonePrompt.classList.remove('hidden');
+    });
+
+    // Demo barcode click handlers
+    document.querySelectorAll('.demo-barcode-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const barcode = btn.getAttribute('data-barcode');
+        runMealScan({ testBarcode: barcode });
+      });
+    });
+
+    btnScanMeal.addEventListener('click', () => {
+      if (!currentMealBase64) {
+        alert('Please upload a meal photo or click a demo barcode to test.');
+        return;
+      }
+      runMealScan({ image: currentMealBase64 });
+    });
+
+    async function runMealScan(payload) {
+      const spinner = document.getElementById('scan-btn-spinner');
+      const btnText = document.getElementById('scan-btn-text');
+      btnScanMeal.disabled = true;
+      spinner.classList.remove('hidden');
+      btnText.innerText = 'Analyzing with Gemini & Open Food Facts...';
+
+      const userKey = localStorage.getItem('GEMINI_API_KEY') || localStorage.getItem('gemini_api_key') || '';
+      try {
+        const res = await fetch('/api/health-meal-scan', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-gemini-key': userKey
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          throw new Error(errJson.error || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        lastScanData = data;
+        renderMealResults(data);
+      } catch (err) {
+        alert('Meal Scan Error: ' + err.message);
+      } finally {
+        btnScanMeal.disabled = false;
+        spinner.classList.add('hidden');
+        btnText.innerText = 'Analyze Meal & Macros';
+      }
+    }
+
+    function renderMealResults(data) {
+      const container = document.getElementById('meal-results-container');
+      container.classList.remove('hidden');
+
+      // Confidence banner
+      const confBanner = document.getElementById('meal-confidence-banner');
+      if (data.confidence === 'low') confBanner.classList.remove('hidden');
+      else confBanner.classList.add('hidden');
+
+      // Notes
+      document.getElementById('meal-notes-text').innerText = data.notes || '';
+
+      // Totals
+      const totals = data.totals || {};
+      document.getElementById('res-total-cal').innerText = totals.calories || 0;
+      document.getElementById('res-total-p').innerText = totals.protein_g || 0;
+      document.getElementById('res-total-c').innerText = totals.carbs_g || 0;
+      document.getElementById('res-total-f').innerText = totals.fat_g || 0;
+      document.getElementById('res-total-fib').innerText = totals.fiber_g || 0;
+
+      // Table items
+      const tbody = document.getElementById('meal-items-tbody');
+      tbody.innerHTML = '';
+
+      (data.items || []).forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-canvas-soft/50 transition';
+
+        const isVerified = item.source === 'verified';
+        const badgeHtml = isVerified
+          ? `<span class="px-2 py-0.5 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-300 rounded font-semibold">✓ Verified via Open Food Facts ${item.nutriscore ? `(Score: ${item.nutriscore})` : ''}</span>`
+          : `<span class="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 border border-slate-200 rounded">AI estimate</span>`;
+
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-ink">${item.name}</td>
+          <td class="p-3">${badgeHtml}</td>
+          <td class="p-3 text-right text-mute">${item.estimated_grams || 100}g</td>
+          <td class="p-3 text-right font-semibold text-ink">${item.calories || 0}</td>
+          <td class="p-3 text-right text-emerald-600">${item.protein_g || 0}g</td>
+          <td class="p-3 text-right text-blue-600">${item.carbs_g || 0}g</td>
+          <td class="p-3 text-right text-amber-600">${item.fat_g || 0}g</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      container.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Add scanned meal to daily log
+    document.getElementById('btn-log-this-meal').addEventListener('click', () => {
+      if (!lastScanData || !lastScanData.totals) return;
+      const t = lastScanData.totals;
+      currentLog.calories += (t.calories || 0);
+      currentLog.protein += (t.protein_g || 0);
+      currentLog.carbs += (t.carbs_g || 0);
+      currentLog.fat += (t.fat_g || 0);
+      currentLog.fiber += (t.fiber_g || 0);
+
+      // round numbers
+      currentLog.protein = Math.round(currentLog.protein * 10) / 10;
+      currentLog.carbs = Math.round(currentLog.carbs * 10) / 10;
+      currentLog.fat = Math.round(currentLog.fat * 10) / 10;
+      currentLog.fiber = Math.round(currentLog.fiber * 10) / 10;
+
+      saveDailyLog(currentLog);
+      alert('Logged meal macros to Today\'s Nutrition Tracker!');
+    });
+
+    // ── FEATURE 3: FORM CHECKER LOGIC ──────────────────────────────────────
+    const formFileInput = document.getElementById('form-file-input');
+    const formImgPreview = document.getElementById('form-img-preview');
+    const formPreviewContainer = document.getElementById('form-preview-container');
+    const formDropzonePrompt = document.getElementById('form-dropzone-prompt');
+    const formClearImg = document.getElementById('form-clear-img');
+    const btnCheckForm = document.getElementById('btn-check-form');
+    let currentFormBase64 = null;
+
+    formFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        currentFormBase64 = await fileToBase64(file);
+        formImgPreview.src = currentFormBase64;
+        formPreviewContainer.classList.remove('hidden');
+        formDropzonePrompt.classList.add('hidden');
+      }
+    });
+
+    formClearImg.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentFormBase64 = null;
+      formFileInput.value = '';
+      formPreviewContainer.classList.add('hidden');
+      formDropzonePrompt.classList.remove('hidden');
+    });
+
+    btnCheckForm.addEventListener('click', async () => {
+      if (!currentFormBase64) {
+        alert('Please upload an exercise pose photo first.');
+        return;
+      }
+
+      const exerciseName = document.getElementById('form-exercise-select').value;
+      const spinner = document.getElementById('form-btn-spinner');
+      const btnText = document.getElementById('form-btn-text');
+      btnCheckForm.disabled = true;
+      spinner.classList.remove('hidden');
+      btnText.innerText = 'Analyzing Posture & Alignment...';
+
+      const userKey = localStorage.getItem('GEMINI_API_KEY') || localStorage.getItem('gemini_api_key') || '';
+      try {
+        const res = await fetch('/api/health-form-check', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-gemini-key': userKey
+          },
+          body: JSON.stringify({ image: currentFormBase64, exerciseName })
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          throw new Error(errJson.error || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        renderFormResults(data);
+      } catch (err) {
+        alert('Form Check Error: ' + err.message);
+      } finally {
+        btnCheckForm.disabled = false;
+        spinner.classList.add('hidden');
+        btnText.innerText = 'Analyze Posture & Alignment';
+      }
+    });
+
+    function renderFormResults(data) {
+      document.getElementById('form-result-placeholder').classList.add('hidden');
+      const card = document.getElementById('form-result-card');
+      card.classList.remove('hidden');
+
+      const overall = data.overall || 'unclear';
+      const statusBox = document.getElementById('form-status-box');
+      const statusIcon = document.getElementById('form-status-icon');
+      const statusTitle = document.getElementById('form-status-title');
+      const statusBadge = document.getElementById('form-status-badge');
+      document.getElementById('form-exercise-name').innerText = data.exerciseName || 'Exercise Analysis';
+
+      if (overall === 'good') {
+        statusBox.className = 'p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200 flex items-center justify-between';
+        statusIcon.innerText = '✅';
+        statusTitle.innerText = 'Good Form & Alignment';
+        statusBadge.className = 'px-2.5 py-1 text-xs font-mono font-semibold uppercase rounded-full bg-emerald-600 text-white';
+        statusBadge.innerText = 'GOOD';
+      } else if (overall === 'needs_adjustment') {
+        statusBox.className = 'p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 flex items-center justify-between';
+        statusIcon.innerText = '⚠️';
+        statusTitle.innerText = 'Adjustment Recommended';
+        statusBadge.className = 'px-2.5 py-1 text-xs font-mono font-semibold uppercase rounded-full bg-amber-600 text-white';
+        statusBadge.innerText = 'NEEDS ADJUSTMENT';
+      } else {
+        statusBox.className = 'p-4 rounded-xl border border-slate-300 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center justify-between';
+        statusIcon.innerText = '❓';
+        statusTitle.innerText = 'Alignment Unclear';
+        statusBadge.className = 'px-2.5 py-1 text-xs font-mono font-semibold uppercase rounded-full bg-slate-500 text-white';
+        statusBadge.innerText = 'UNCLEAR';
+      }
+
+      // Safety Alert
+      const safetyBox = document.getElementById('form-safety-alert');
+      if (data.safety_note) {
+        safetyBox.classList.remove('hidden');
+        document.getElementById('form-safety-text').innerText = data.safety_note;
+      } else {
+        safetyBox.classList.add('hidden');
+      }
+
+      // Observations
+      const obsList = document.getElementById('form-obs-list');
+      obsList.innerHTML = '';
+      (data.observations || []).forEach(obs => {
+        const li = document.createElement('li');
+        li.innerText = obs;
+        obsList.appendChild(li);
+      });
+
+      // Corrections
+      const corrList = document.getElementById('form-corr-list');
+      corrList.innerHTML = '';
+      (data.corrections || []).forEach(corr => {
+        const li = document.createElement('li');
+        li.innerText = corr;
+        corrList.appendChild(li);
+      });
+    }
+
+    // ── FEATURE 2: PLAN GENERATOR LOGIC ──────────────────────────────────
+    const planFileInput = document.getElementById('plan-file-input');
+    const planImgFilename = document.getElementById('plan-img-filename');
+    const btnGeneratePlan = document.getElementById('btn-generate-plan');
+    let currentPlanBase64 = null;
+
+    planFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        currentPlanBase64 = await fileToBase64(file);
+        planImgFilename.innerText = 'Photo attached: ' + file.name;
+        planImgFilename.classList.add('text-ink', 'font-semibold');
+      }
+    });
+
+    btnGeneratePlan.addEventListener('click', () => runPlanGenerator());
+
+    document.querySelectorAll('.regen-section-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sec = btn.getAttribute('data-section');
+        runPlanGenerator(sec);
+      });
+    });
+
+    async function runPlanGenerator(sectionToRegenerate = null) {
+      const age = document.getElementById('plan-age').value;
+      const goal = document.getElementById('plan-goal').value;
+      const activityLevel = document.getElementById('plan-activity').value;
+      const dietaryRestrictions = document.getElementById('plan-diet').value;
+      const sleepIssues = document.getElementById('plan-sleep').value;
+
+      const spinner = document.getElementById('plan-btn-spinner');
+      const btnText = document.getElementById('plan-btn-text');
+      btnGeneratePlan.disabled = true;
+      spinner.classList.remove('hidden');
+      btnText.innerText = sectionToRegenerate ? `Refreshing ${sectionToRegenerate}...` : 'Generating 3-Part Health Plan...';
+
+      const userKey = localStorage.getItem('GEMINI_API_KEY') || localStorage.getItem('gemini_api_key') || '';
+      try {
+        const res = await fetch('/api/health-plan-generator', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-gemini-key': userKey
+          },
+          body: JSON.stringify({
+            age, goal, activityLevel, dietaryRestrictions, sleepIssues,
+            image: currentPlanBase64,
+            sectionToRegenerate
+          })
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          throw new Error(errJson.error || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        renderPlanResults(data);
+      } catch (err) {
+        alert('Plan Generation Error: ' + err.message);
+      } finally {
+        btnGeneratePlan.disabled = false;
+        spinner.classList.add('hidden');
+        btnText.innerText = 'Generate 3-Part Health Plan';
+      }
+    }
+
+    function renderPlanResults(data) {
+      document.getElementById('plan-result-placeholder').classList.add('hidden');
+      document.getElementById('plan-result-cards').classList.remove('hidden');
+
+      document.getElementById('plan-impression-text').innerText = data.qualitative_impression || 'Plan calibrated to your specified fitness goals and preferences.';
+
+      // Workout
+      const w = data.workout_plan || {};
+      document.getElementById('plan-workout-title').innerText = w.title || 'Weekly Workout Split';
+      document.getElementById('plan-workout-diff').innerText = w.difficulty || 'Intermediate';
+      const wDaysContainer = document.getElementById('plan-workout-days');
+      wDaysContainer.innerHTML = '';
+      (w.days || []).forEach(day => {
+        const div = document.createElement('div');
+        div.className = 'bg-canvas-soft p-3 rounded-lg border border-hairline space-y-1';
+        div.innerHTML = `<strong class="text-ink font-semibold block">${day.day}</strong>`;
+        const ul = document.createElement('ul');
+        ul.className = 'list-disc pl-4 text-mute space-y-0.5';
+        (day.exercises || []).forEach(ex => {
+          const li = document.createElement('li');
+          li.innerHTML = `<span class="text-ink font-medium">${ex.name}:</span> ${ex.sets_reps} ${ex.notes ? `<span class="text-[11px] text-mute">(${ex.notes})</span>` : ''}`;
+          ul.appendChild(li);
+        });
+        div.appendChild(ul);
+        wDaysContainer.appendChild(div);
+      });
+
+      // Diet
+      const d = data.diet_plan || {};
+      document.getElementById('plan-diet-title').innerText = d.title || 'Nutritional Plan';
+      document.getElementById('plan-diet-guidance').innerText = d.guidance || '';
+      const sample = d.sample_day || {};
+      document.getElementById('diet-sample-b').innerText = sample.breakfast || '-';
+      document.getElementById('diet-sample-l').innerText = sample.lunch || '-';
+      document.getElementById('diet-sample-d').innerText = sample.dinner || '-';
+      document.getElementById('diet-sample-s').innerText = sample.snacks || '-';
+
+      // Sleep
+      const s = data.sleep_plan || {};
+      document.getElementById('plan-sleep-title').innerText = s.title || 'Sleep & Recovery Protocol';
+      document.getElementById('sleep-schedule').innerText = s.schedule || '7-8 hours nightly';
+      document.getElementById('sleep-cutoff').innerText = s.screen_time_cutoff || '60 mins before bed';
+
+      const sWindList = document.getElementById('sleep-winddown-list');
+      sWindList.innerHTML = '';
+      (s.wind_down_routine || []).forEach(item => {
+        const li = document.createElement('li');
+        li.innerText = item;
+        sWindList.appendChild(li);
+      });
+    }
+  </script>
+
+</Layout>
