@@ -200,14 +200,14 @@ import '../styles/global.css';
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
         Notebooks
       </button>
-      <a href="/health" class="w-full h-9 px-3 rounded-sm text-[13px] font-semibold flex items-center gap-2 text-rose-600 bg-rose-50 border border-rose-200 transition hover:bg-rose-100">
+      <button data-mode="health" class="mode-btn w-full h-9 px-3 rounded-sm text-[13px] font-semibold flex items-center gap-2 text-rose-600 bg-rose-50/50 border border-rose-200/50 transition hover:bg-rose-100/50 cursor-pointer">
         <span class="text-sm">❤️</span>
         Health Studio
-      </a>
-      <a href="/kiddienotes" class="w-full h-9 px-3 rounded-sm text-[13px] font-semibold flex items-center gap-2 text-indigo-600 bg-indigo-50 border border-indigo-200 transition hover:bg-indigo-100">
+      </button>
+      <button data-mode="kiddienotes" class="mode-btn w-full h-9 px-3 rounded-sm text-[13px] font-semibold flex items-center gap-2 text-indigo-600 bg-indigo-50/50 border border-indigo-200/50 transition hover:bg-indigo-100/50 cursor-pointer">
         <span class="text-sm">🎒</span>
         KiddieNotes (K-12)
-      </a>
+      </button>
       <button data-mode="search" class="mode-btn w-full h-9 px-3 rounded-sm text-[13px] font-medium flex items-center gap-2 text-themed-body transition hover-card2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         Web Search
@@ -572,6 +572,93 @@ import '../styles/global.css';
 
           <!-- Search Results Box -->
           <div id="search-results" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: HEALTH STUDIO -->
+    <div id="view-health" class="flex-1 flex flex-col overflow-hidden hidden">
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div class="max-w-5xl mx-auto space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-themed pb-4">
+            <div class="flex items-center gap-3">
+              <span class="p-2 bg-rose-500/10 text-rose-600 rounded-lg text-xl border border-rose-500/20">❤️</span>
+              <div>
+                <h3 class="text-display-md text-themed-ink font-semibold">Health Intelligence Studio</h3>
+                <p class="text-xs text-themed-mute font-mono">Nutrition scanning, posture checking, and longevity protocols.</p>
+              </div>
+            </div>
+            <button type="button" onclick="document.getElementById('settings-modal').classList.remove('hidden')" class="px-3 py-1.5 rounded-full border border-themed text-xs font-mono text-themed-body hover:text-themed-ink transition cursor-pointer">
+              🔑 Config Gemini Key
+            </button>
+          </div>
+
+          <div class="surface-card2 border border-themed rounded-lg p-4 text-xs font-mono text-themed-mute space-y-1">
+            <span class="font-semibold text-themed-ink uppercase text-[10px]">ℹ️ Clinical Disclaimer & Privacy</span>
+            <p class="leading-relaxed">AI estimations for educational wellness. Not medical advice. Uploaded photos are analyzed in-memory and deleted immediately.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="surface-card border border-themed rounded-xl p-5 shadow-level-2 space-y-3">
+              <h4 class="font-semibold text-themed-ink text-sm flex items-center gap-2">🍽️ Nutrition Scanner</h4>
+              <p class="text-xs text-themed-body leading-relaxed">Upload meal photos or scan barcodes via Open Food Facts for instant macro breakdowns.</p>
+              <a href="/health" class="inline-flex items-center text-xs font-mono font-semibold text-rose-600 hover:underline">Open Full Scanner →</a>
+            </div>
+            <div class="surface-card border border-themed rounded-xl p-5 shadow-level-2 space-y-3">
+              <h4 class="font-semibold text-themed-ink text-sm flex items-center gap-2">🏋️ Posture Mechanics</h4>
+              <p class="text-xs text-themed-body leading-relaxed">Check squat, deadlift, or spinal posture mechanics with AI-guided biomechanic feedback.</p>
+              <a href="/health" class="inline-flex items-center text-xs font-mono font-semibold text-rose-600 hover:underline">Check Posture →</a>
+            </div>
+            <div class="surface-card border border-themed rounded-xl p-5 shadow-level-2 space-y-3">
+              <h4 class="font-semibold text-themed-ink text-sm flex items-center gap-2">📋 Longevity Protocols</h4>
+              <p class="text-xs text-themed-body leading-relaxed">Generate personalized circadian sleep routines, exercise splits, and nutrition goals.</p>
+              <a href="/health" class="inline-flex items-center text-xs font-mono font-semibold text-rose-600 hover:underline">Generate Protocol →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: KIDDIENOTES -->
+    <div id="view-kiddienotes" class="flex-1 flex flex-col overflow-hidden hidden">
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div class="max-w-5xl mx-auto space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-themed pb-4">
+            <div class="flex items-center gap-3">
+              <span class="p-2 bg-indigo-500/10 text-indigo-600 rounded-lg text-xl border border-indigo-500/20">🎒</span>
+              <div>
+                <h3 class="text-display-md text-themed-ink font-semibold">KiddieNotes AI Studio</h3>
+                <p class="text-xs text-themed-mute font-mono">Active recall quizzes, 3D flashcards, podcasts & revision games for Nursery to 12th Class.</p>
+              </div>
+            </div>
+            <button type="button" onclick="document.getElementById('settings-modal').classList.remove('hidden')" class="px-3 py-1.5 rounded-full border border-themed text-xs font-mono text-themed-body hover:text-themed-ink transition cursor-pointer">
+              🔑 Config Gemini Key
+            </button>
+          </div>
+
+          <div class="surface-card rounded-lg border border-themed p-4 space-y-3 shadow-level-2">
+            <label class="block text-xs font-mono font-semibold text-themed-ink uppercase tracking-wider">Select Grade Level</label>
+            <div class="flex flex-wrap gap-2 text-xs font-mono">
+              <button class="px-3 py-1 rounded-full border border-themed surface-card2 text-themed-ink hover-card2 font-medium">Nursery - KG</button>
+              <button class="px-3 py-1 rounded-full border border-themed surface-card2 text-themed-ink hover-card2 font-medium">Class 1st - 5th</button>
+              <button class="px-3 py-1 rounded-full border border-themed btn-ink font-medium">Class 6th - 8th</button>
+              <button class="px-3 py-1 rounded-full border border-themed surface-card2 text-themed-ink hover-card2 font-medium">Class 9th - 10th</button>
+              <button class="px-3 py-1 rounded-full border border-themed surface-card2 text-themed-ink hover-card2 font-medium">Class 11th - 12th</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="surface-card border border-themed rounded-xl p-5 shadow-level-2 space-y-3">
+              <h4 class="font-semibold text-themed-ink text-sm flex items-center gap-2">📝 Active Recall Quizzes</h4>
+              <p class="text-xs text-themed-body leading-relaxed">Interactive practice quizzes tailored for K-12 curriculums.</p>
+              <a href="/kiddienotes" class="inline-flex items-center text-xs font-mono font-semibold text-indigo-600 hover:underline">Start Quiz Studio →</a>
+            </div>
+            <div class="surface-card border border-themed rounded-xl p-5 shadow-level-2 space-y-3">
+              <h4 class="font-semibold text-themed-ink text-sm flex items-center gap-2">🃏 3D Flashcards & Podcasts</h4>
+              <p class="text-xs text-themed-body leading-relaxed">3D flip flashcards and AI audio podcasts for quick study revision.</p>
+              <a href="/kiddienotes" class="inline-flex items-center text-xs font-mono font-semibold text-indigo-600 hover:underline">Launch Flashcards →</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1202,7 +1289,7 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
       currentPersona = 'default';
     }
 
-    ['chat','image','code','notebook','search'].forEach(v => document.getElementById('view-'+v)?.classList.add('hidden'));
+    ['chat','image','code','notebook','search','health','kiddienotes'].forEach(v => document.getElementById('view-'+v)?.classList.add('hidden'));
     document.getElementById('view-'+currentMode)?.classList.remove('hidden');
     
     if (currentMode === 'chat' && currentConvId) {
@@ -1217,7 +1304,7 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
         document.getElementById('topbar-title').textContent = 'Chat';
       }
     } else {
-      const titles = {chat:'Chat',image:'Image generation',code:'Coding',notebook:'Notebooks',search:'Web search'};
+      const titles = {chat:'Chat',image:'Image generation',code:'Coding',notebook:'Notebooks',search:'Web search',health:'Health Intelligence Studio',kiddienotes:'KiddieNotes AI Studio'};
       document.getElementById('topbar-title').textContent = titles[currentMode] || 'SHESHAAI';
     }
 
